@@ -234,26 +234,38 @@ st.markdown("""
 # PROFESSIONAL KPI SECTION
 # =========================================================
 
+
 st.markdown("""
 <style>
 div[data-testid="stMetric"] {
-    background: white;
+    background: #1B241F !important;
     padding: 22px;
     border-radius: 12px;
-    border: 1px solid #DCE3EC;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #2B3B30;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 div[data-testid="stMetricLabel"] {
-    color: #526477;
+    color: #B3C0B6 !important;
     font-weight: 600;
 }
 
 div[data-testid="stMetricValue"] {
-    color: #17365D;
+    color: #FFFFFF !important;
     font-weight: 800;
 }
+
+[data-testid="stAlert"] {
+    background: #1B3527 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stAlert"] * {
+    color: #FFFFFF !important;
+}
 </style>
+""", unsafe_allow_html=True)
+
 """, unsafe_allow_html=True)
 
 col1, col2, col3, col4 = st.columns(4)
