@@ -120,7 +120,16 @@ col4.metric("📊 Recommendations", len(recommendations))
 # =========================================================
 
 with st.sidebar:
+      st.markdown("""
+        <h2 style="color:#17365D;">
+            🎛️ Dashboard Filters
+        </h2>
+        <p style="color:#64748B; font-size:13px;">
+            Customize your optimization analysis
+        </p>
+    """, unsafe_allow_html=True)
 
+    st.divider()
     st.header("🎛️ Filters")
 
     st.subheader("Factory Selection")
