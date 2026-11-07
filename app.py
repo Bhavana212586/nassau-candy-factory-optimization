@@ -47,10 +47,28 @@ factories = sorted(df["Current Factory"].dropna().unique())
 # TITLE
 # =========================================================
 
-st.title("🏭 Nassau Candy Factory Optimization")
-st.write(
-    "Factory Reallocation & Shipping Optimization Recommendation System"
-)
+# =========================================================
+# PROFESSIONAL HEADER
+# =========================================================
+
+st.markdown("""
+<div style="
+    background: linear-gradient(120deg, #142B49, #245A91);
+    padding: 28px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+">
+    <h1 style="color:white; margin:0;">
+        🏭 Nassau Candy Analytics
+    </h1>
+    <p style="color:#DCE8F5; font-size:16px; margin-top:10px;">
+        Factory Reallocation & Shipping Optimization System
+    </p>
+    <p style="color:#DCE8F5; font-size:13px;">
+        Data-driven factory allocation and shipping decisions
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 
 # =========================================================
