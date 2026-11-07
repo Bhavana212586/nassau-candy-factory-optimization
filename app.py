@@ -284,7 +284,7 @@ if not product_data.empty:
         text_auto=".2f"
     )
 
-    fig.update_layout(
+       fig.update_layout(
         plot_bgcolor="white",
         paper_bgcolor="white",
         font=dict(color="#17365D"),
@@ -292,6 +292,17 @@ if not product_data.empty:
         xaxis_title="Factory",
         yaxis_title="Predicted Lead Time (Days)",
         showlegend=False
+    )
+
+    fig.update_traces(
+        marker_color="#17365D",
+        textposition="outside"
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
     )
 
      fig.update_traces(
