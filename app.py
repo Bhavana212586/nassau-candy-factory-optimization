@@ -57,6 +57,7 @@ st.write(
 # KPI SECTION
 # =========================================================
 
+
 # =========================================================
 # PROFESSIONAL KPI SECTION
 # =========================================================
@@ -95,11 +96,17 @@ col4.metric("📊 Recommendations", len(recommendations))
 # CONTROLS
 # =========================================================
 
-st.header("🎛️ Optimization Controls")
 
-col1, col2 = st.columns(2)
+# =========================================================
+# SIDEBAR FILTERS
+# =========================================================
 
-with col1:
+with st.sidebar:
+
+    st.header("🎛️ Filters")
+
+    st.subheader("Factory Selection")
+
     product = st.selectbox(
         "Select Product",
         sorted(df["Product Name"].unique())
@@ -110,20 +117,24 @@ with col1:
         sorted(df["Region"].dropna().unique())
     )
 
-
-with col2:
     ship_mode = st.selectbox(
         "Select Ship Mode",
         sorted(df["Ship Mode"].dropna().unique())
     )
 
+    st.divider()
+
+    st.subheader("Optimization Priority")
+
     priority = st.slider(
-        "Optimization Priority: Speed ↔ Profit",
+        "Speed ↔ Profit",
         min_value=0,
         max_value=100,
         value=70,
         help="0 = Profit priority, 100 = Speed priority"
     )
+
+    st.caption("Adjust filters to explore factory optimization.")
 
 
 # =========================================================
