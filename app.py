@@ -119,8 +119,14 @@ col4.metric("📊 Recommendations", len(recommendations))
 # SIDEBAR FILTERS
 # =========================================================
 
+
+# =========================================================
+# SIDEBAR FILTERS
+# =========================================================
+
 with st.sidebar:
-      st.markdown("""
+
+    st.markdown("""
         <h2 style="color:#17365D;">
             🎛️ Dashboard Filters
         </h2>
@@ -130,7 +136,6 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.divider()
-    st.header("🎛️ Filters")
 
     st.subheader("Factory Selection")
 
@@ -162,6 +167,11 @@ with st.sidebar:
     )
 
     st.caption("Adjust filters to explore factory optimization.")
+
+
+# =========================================================
+# FACTORY OPTIMIZATION SIMULATOR
+# =========================================================
 
 
 # =========================================================
