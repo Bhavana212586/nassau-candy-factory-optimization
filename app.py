@@ -57,12 +57,38 @@ st.write(
 # KPI SECTION
 # =========================================================
 
+# =========================================================
+# PROFESSIONAL KPI SECTION
+# =========================================================
+
+st.markdown("""
+<style>
+div[data-testid="stMetric"] {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    border: 1px solid #DCE3EC;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #526477;
+    font-weight: 600;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #17365D;
+    font-weight: 800;
+}
+</style>
+""", unsafe_allow_html=True)
+
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Total Orders", len(df))
-col2.metric("Total Products", df["Product Name"].nunique())
-col3.metric("Total Factories", df["Current Factory"].nunique())
-col4.metric("Recommendations", len(recommendations))
+col1.metric("📦 Total Orders", len(df))
+col2.metric("🍬 Total Products", df["Product Name"].nunique())
+col3.metric("🏭 Total Factories", df["Current Factory"].nunique())
+col4.metric("📊 Recommendations", len(recommendations))
 
 
 # =========================================================
