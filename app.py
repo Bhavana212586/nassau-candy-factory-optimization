@@ -351,7 +351,21 @@ filtered_recommendations = filtered_recommendations.sort_values(
     ascending=False
 )
 
+filtered_recommendations["Priority Score"] = (
+    filtered_recommendations["Priority Score"].round(2)
+)
 
+filtered_recommendations["Average Gross Profit"] = (
+    filtered_recommendations["Average Gross Profit"].round(2)
+)
+
+filtered_recommendations["Lead Time Reduction"] = (
+    filtered_recommendations["Lead Time Reduction"].round(2)
+)
+
+filtered_recommendations["Lead Time Reduction %"] = (
+    filtered_recommendations["Lead Time Reduction %"].round(2)
+)
 st.dataframe(
     filtered_recommendations[
         [
