@@ -290,24 +290,13 @@ if not product_data.empty:
         font=dict(color="#17365D"),
         title_font_size=20,
         xaxis_title="Factory",
-        yaxis_title="Predicted Lead Time (Days)",
+        yaxis_title="Predicted Lead Time",
         showlegend=False
     )
 
     fig.update_traces(
         marker_color="#17365D",
         textposition="outside"
-    )
-
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
-
-     fig.update_traces(
-        marker_color="#17365D",
-        textposition="outside"
-    )
     )
 
     st.plotly_chart(
