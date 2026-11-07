@@ -269,7 +269,6 @@ if not product_data.empty:
     st.subheader("📊 What-If Factory Comparison")
 
     fig = px.bar(
-        fig = px.bar(
     scenario_df,
     x="Factory",
     y="Predicted Lead Time",
