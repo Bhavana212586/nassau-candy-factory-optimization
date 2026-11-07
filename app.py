@@ -1,4 +1,14 @@
+import streamlit as st
+import pandas as pd
+import joblib
+import plotly.express as px
+from sklearn.preprocessing import OneHotEncoder
 
+st.set_page_config(
+    page_title="Nassau Candy Factory Optimization",
+    page_icon="🏭",
+    layout="wide"
+)
 # =========================================================
 # PROFESSIONAL DASHBOARD HEADER
 # =========================================================
