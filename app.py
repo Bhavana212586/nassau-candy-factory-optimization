@@ -1,4 +1,5 @@
-        plot_bgcolor="#FFFFFF",
+import streamlit as st
+plot_bgcolor="#FFFFFF",
         paper_bgcolor="#FFFFFF",
         font=dict(color="#17365D"),
         title_font=dict(color="#17365D", size=19),
