@@ -284,7 +284,7 @@ if not product_data.empty:
         text_auto=".2f"
     )
 
-       fig.update_layout(
+    fig.update_layout(
         plot_bgcolor="white",
         paper_bgcolor="white",
         font=dict(color="#17365D"),
