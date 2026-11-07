@@ -269,33 +269,33 @@ if not product_data.empty:
     st.subheader("📊 What-If Factory Comparison")
 
     fig = px.bar(
-    scenario_df,
-    x="Factory",
-    y="Predicted Lead Time",
-    title=f"Factory Lead Time Comparison - {product}",
-    color="Factory",
-    text_auto=".2f"
-)
+        scenario_df,
+        x="Factory",
+        y="Predicted Lead Time",
+        title=f"Factory Lead Time Comparison - {product}",
+        color="Factory",
+        text_auto=".2f"
+    )
 
-fig.update_layout(
-    plot_bgcolor="white",
-    paper_bgcolor="white",
-    font=dict(color="#17365D"),
-    title_font_size=20,
-    xaxis_title="Factory",
-    yaxis_title="Predicted Lead Time (Days)",
-    showlegend=False
-)
+    fig.update_layout(
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        font=dict(color="#17365D"),
+        title_font_size=20,
+        xaxis_title="Factory",
+        yaxis_title="Predicted Lead Time (Days)",
+        showlegend=False
+    )
 
-fig.update_traces(
-    textposition="outside"
-)
+    fig.update_traces(
+        textposition="outside"
     )
 
     st.plotly_chart(
         fig,
         use_container_width=True
     )
+
 
 
 # =========================================================
