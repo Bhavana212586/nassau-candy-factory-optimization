@@ -303,7 +303,6 @@ if not product_data.empty:
         fig,
         use_container_width=True
     )
-    )
 
      fig.update_traces(
         marker_color="#17365D",
