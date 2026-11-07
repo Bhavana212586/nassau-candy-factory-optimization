@@ -232,7 +232,15 @@ if not product_data.empty:
     # =====================================================
 
     st.subheader("Recommendation")
-
+    if recommended_factory == current_factory:
+        st.success(
+            f"Your current factory ({current_factory}) "
+            "is already the best option for this selection."
+        )
+    else:
+        st.success(
+            f"Recommended Factory: {recommended_factory}"
+        )
     col1, col2 = st.columns(2)
 
     col1.write(
