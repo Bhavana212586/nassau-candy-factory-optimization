@@ -15,6 +15,160 @@ st.set_page_config(
     layout="wide"
 )
 
+# ---------------------------------------------------------
+# PROFESSIONAL DARK THEME
+# ---------------------------------------------------------
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'DM Sans', sans-serif;
+}
+
+.stApp,
+[data-testid="stAppViewContainer"] {
+    background: #101411 !important;
+    color: #F5F7F5 !important;
+}
+
+[data-testid="stHeader"] {
+    background: #101411 !important;
+}
+
+[data-testid="stSidebar"] {
+    background: #151B18 !important;
+    border-right: 1px solid #26332B;
+}
+
+[data-testid="stSidebar"] * {
+    color: #FFFFFF !important;
+}
+
+.stApp h1, .stApp h2, .stApp h3,
+.stApp p, .stApp label {
+    color: #F5F7F5 !important;
+}
+
+.hero {
+    background: linear-gradient(115deg, #1B3527, #10251B) !important;
+    border: 1px solid #2B6844;
+    border-radius: 22px;
+    padding: 30px 34px;
+    margin-bottom: 25px;
+}
+
+.hero-kicker {
+    color: #9BE7B2 !important;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.hero h1 {
+    color: #FFFFFF !important;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.hero p {
+    color: #D0E2D5 !important;
+}
+
+.kpi-card {
+    background: #1B241F !important;
+    border: 1px solid #2B3B30;
+    border-radius: 16px;
+    padding: 19px 20px;
+}
+
+.kpi-label {
+    color: #AAB8AE !important;
+}
+
+.kpi-value {
+    color: #FFFFFF !important;
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.kpi-note {
+    color: #8FD6A5 !important;
+}
+
+.section-heading {
+    color: #FFFFFF !important;
+    font-size: 21px;
+    font-weight: 700;
+    margin: 26px 0 5px;
+}
+
+.section-subtitle {
+    color: #B3C0B6 !important;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+/* Sidebar input fields */
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea {
+    background: #26332B !important;
+    color: #FFFFFF !important;
+}
+
+/* Dropdown */
+[data-testid="stSidebar"] [data-baseweb="select"] {
+    background: #26332B !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="select"] * {
+    color: #FFFFFF !important;
+}
+
+/* Selected dropdown tags */
+[data-baseweb="tag"] {
+    background: #1DB954 !important;
+}
+
+[data-baseweb="tag"] * {
+    color: #07130B !important;
+}
+
+/* Slider */
+[data-testid="stSlider"] {
+    color: #1DB954 !important;
+}
+
+/* Tables */
+[data-testid="stDataFrame"] {
+    border: 1px solid #2B3B30;
+    border-radius: 12px;
+}
+
+/* Download button */
+.stDownloadButton button {
+    background: #1DB954 !important;
+    color: #07130B !important;
+    border: none;
+    border-radius: 9px;
+    font-weight: 700;
+}
+
+.stDownloadButton button:hover {
+    background: #35D36D !important;
+}
+
+hr {
+    border-color: #29362E;
+}
+
+footer {
+    visibility: hidden;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 
 # =========================================================
 # LOAD DATA
