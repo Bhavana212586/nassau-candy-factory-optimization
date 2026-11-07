@@ -294,7 +294,7 @@ if not product_data.empty:
         showlegend=False
     )
 
-        fig.update_traces(
+     fig.update_traces(
         marker_color="#17365D",
         textposition="outside"
     )
