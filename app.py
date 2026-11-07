@@ -234,6 +234,9 @@ st.markdown("""
 # PROFESSIONAL KPI SECTION
 # =========================================================
 
+# =========================================================
+# PROFESSIONAL KPI SECTION
+# =========================================================
 
 st.markdown("""
 <style>
@@ -266,14 +269,7 @@ div[data-testid="stMetricValue"] {
 </style>
 """, unsafe_allow_html=True)
 
-""", unsafe_allow_html=True)
 
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric("📦 Total Orders", len(df))
-col2.metric("🍬 Total Products", df["Product Name"].nunique())
-col3.metric("🏭 Total Factories", df["Current Factory"].nunique())
-col4.metric("📊 Recommendations", len(recommendations))
 
 
 # =========================================================
