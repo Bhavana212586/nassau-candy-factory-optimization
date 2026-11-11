@@ -703,7 +703,10 @@ else:
     st.dataframe(
         display_data,
         use_container_width=True,
-        hide_index=True
+        hide_index=True,
+        # Show every recommendation row so the Risk & Impact Panel
+        # starts only after the complete recommendation table.
+        height=max(180, 38 * (len(display_data) + 1))
     )
 
     csv_data = display_data.to_csv(index=False).encode("utf-8")
