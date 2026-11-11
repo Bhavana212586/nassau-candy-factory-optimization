@@ -700,14 +700,9 @@ else:
         f"Recommendations are ranked using the current slider setting: "
         f"{priority}% speed weight and {100 - priority}% profit weight."
     )
-    st.dataframe(
-        display_data,
-        use_container_width=True,
-        hide_index=True,
-        # Give the recommendation table enough vertical space to show all
-        # 10 recommendation rows before the separate Risk & Impact Panel.
-        height=600
-    )
+    # Render all recommendation rows in the page flow (no internal
+    # scrollable dataframe). This keeps the complete table above Risk & Impact.
+    st.table(display_data)
 
     csv_data = display_data.to_csv(index=False).encode("utf-8")
     st.download_button(
