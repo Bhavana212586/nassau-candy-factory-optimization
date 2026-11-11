@@ -197,6 +197,11 @@ products = sorted(df["Product Name"].dropna().unique().tolist())
 regions = sorted(df["Region"].dropna().unique().tolist())
 ship_modes = sorted(df["Ship Mode"].dropna().unique().tolist())
 
+# Check whether the historical data contains observed factory alternatives
+product_factory_counts = df.groupby("Product Name")[FACTORY_COLUMN].nunique()
+products_with_one_observed_factory = int(product_factory_counts.eq(1).sum())
+all_products_have_one_observed_factory = bool(product_factory_counts.eq(1).all())
+
 if not factories or not products or not regions or not ship_modes:
     st.error(
         "The dataset must contain valid products, factories, regions, "
@@ -405,6 +410,18 @@ if model_validation:
 else:
     st.info("Holdout model metrics could not be calculated from the supplied model and data.")
 
+st.warning(
+    "Model limitation: the current dataset records each product at only its assigned factory. "
+    "It does not contain observed shipments for the same product from alternative factories. "
+    "Therefore, alternative-factory predictions are experimental what-if estimates and are "
+    "not validated evidence of actual delivery performance."
+)
+if all_products_have_one_observed_factory:
+    st.caption(
+        f"Data coverage check: all {len(product_factory_counts)} products have exactly one "
+        "observed factory assignment in this dataset."
+    )
+
 
 # =========================================================
 # SIDEBAR FILTERS AND OPTIMIZATION PRIORITY
@@ -442,8 +459,8 @@ with st.sidebar:
 # =========================================================
 st.header("🔄 Factory Optimization Simulator")
 st.write(
-    "Compare predicted shipping lead times and a historical profit proxy "
-    "across available factories."
+    "Explore hypothetical factory scenarios using model estimates and a historical "
+    "factory-profit proxy. These scenarios are exploratory, not validated forecasts."
 )
 
 product_data = df[df["Product Name"] == product]
@@ -552,6 +569,12 @@ else:
             )
 
         st.subheader("📊 What-If Factory Comparison")
+        st.warning(
+            "Interpretation: the model was trained on historical records where each product "
+            "appears with its existing factory assignment. A different factory for that "
+            "product is an unseen product-factory combination, so the chart is an exploratory "
+            "model scenario—not a proven delivery-time comparison."
+        )
 
         chart_data = scenario_df.sort_values(
             "Predicted Lead Time", ascending=True
@@ -623,6 +646,10 @@ else:
 # RECOMMENDATION DASHBOARD
 # =========================================================
 st.header("📋 Recommendation Dashboard")
+st.caption(
+    "The following rows are generated from the original experimental scenario analysis. "
+    "Treat them as candidates for further investigation, not confirmed factory-reallocation decisions."
+)
 
 if recommendations.empty:
     st.info("There are no recommendation records to display.")
@@ -655,6 +682,9 @@ else:
         "Average Gross Profit",
         "Priority Score"
     ]
+    # Scenario Confidence Score is intentionally excluded: in the supplied
+    # recommendation file it duplicates Lead Time Reduction % and is not a
+    # statistically calibrated confidence measure.
 
     display_data = filtered_recommendations[display_columns].copy()
 
@@ -689,6 +719,10 @@ else:
 # RISK & IMPACT PANEL
 # =========================================================
 st.header("⚠️ Risk & Impact Panel")
+st.caption(
+    "Impact levels describe the relative size of the supplied scenario improvements. "
+    "They are not operational risk ratings or confidence estimates."
+)
 
 if recommendations.empty:
     st.info("No recommendation data is available for risk analysis.")
@@ -730,9 +764,10 @@ else:
 
 st.info(
     "A higher priority value gives more importance to shipping speed. "
-    "A lower priority value gives more importance to average gross profit. "
-    "At 50, both receive equal weight. Factory predictions depend on the "
-    "trained model and selected inputs."
+    "A lower priority value gives more importance to historical average gross profit. "
+    "At 50, both receive equal weight. Gross profit is a historical factory-level proxy, "
+    "not a predicted profit for the alternative scenario. The model estimates and "
+    "recommendation rankings require validation with real alternative-factory shipment data."
 )
 
 
