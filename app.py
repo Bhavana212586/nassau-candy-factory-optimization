@@ -3,6 +3,10 @@ import pandas as pd
 import joblib
 import plotly.express as px
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.base import clone
+import numpy as np
 
 # =========================================================
 # PAGE CONFIGURATION
@@ -155,6 +159,16 @@ if missing_recommendation_columns:
 for column in DATA_COLUMNS:
     df[column] = df[column].fillna("Unknown").astype(str)
 
+# Validate observed lead time against the supplied order/ship dates.
+if "Lead Time" in df.columns:
+    df["Lead Time"] = pd.to_numeric(df["Lead Time"], errors="coerce")
+if {"Order Date", "Ship Date"}.issubset(df.columns):
+    df["Order Date"] = pd.to_datetime(df["Order Date"], errors="coerce")
+    df["Ship Date"] = pd.to_datetime(df["Ship Date"], errors="coerce")
+    df["Calculated Lead Time"] = (df["Ship Date"] - df["Order Date"]).dt.days
+    if "Lead Time" in df.columns:
+        df["Lead Time Difference"] = df["Lead Time"] - df["Calculated Lead Time"]
+
 numeric_columns = [
     "Lead Time Reduction",
     "Lead Time Reduction %",
@@ -212,6 +226,31 @@ if (
         "Use the matching trained model and dataset."
     )
     st.stop()
+
+# Holdout validation: evaluates the saved model type on a fresh split of
+# the supplied historical data. This is an estimate, not a substitute for
+# the original training report.
+model_validation = None
+if "Lead Time" in df.columns:
+    validation_frame = df.dropna(subset=["Lead Time"]).copy()
+    if len(validation_frame) >= 20:
+        try:
+            X_all = encoder.transform(validation_frame[DATA_COLUMNS])
+            y_all = validation_frame["Lead Time"].astype(float).to_numpy()
+            X_train, X_test, y_train, y_test = train_test_split(
+                X_all, y_all, test_size=0.2, random_state=42
+            )
+            validation_model = clone(model)
+            validation_model.fit(X_train, y_train)
+            y_pred = validation_model.predict(X_test)
+            model_validation = {
+                "MAE": float(mean_absolute_error(y_test, y_pred)),
+                "RMSE": float(np.sqrt(mean_squared_error(y_test, y_pred))),
+                "R2": float(r2_score(y_test, y_pred)),
+                "test_rows": len(y_test),
+            }
+        except Exception:
+            model_validation = None
 
 
 # =========================================================
@@ -336,6 +375,35 @@ overview_cols[0].metric("📦 Total Orders", f"{len(df):,}")
 overview_cols[1].metric("🍬 Total Products", f"{df['Product Name'].nunique():,}")
 overview_cols[2].metric("🏭 Total Factories", f"{df[FACTORY_COLUMN].nunique():,}")
 overview_cols[3].metric("📊 Recommendations", f"{len(recommendations):,}")
+
+st.subheader("🔎 Data Quality & Model Validation")
+quality_cols = st.columns(3)
+if "Lead Time" in df.columns and df["Lead Time"].notna().any():
+    quality_cols[0].metric("Average Historical Lead Time", f"{df['Lead Time'].mean():,.1f} days")
+    quality_cols[1].metric("Maximum Historical Lead Time", f"{df['Lead Time'].max():,.0f} days")
+    if "Lead Time Difference" in df.columns:
+        mismatch_count = int(df["Lead Time Difference"].abs().fillna(0).gt(0).sum())
+        quality_cols[2].metric("Date/Lead-Time Mismatches", f"{mismatch_count:,}")
+    else:
+        quality_cols[2].metric("Lead-Time Records", f"{df['Lead Time'].notna().sum():,}")
+    if df["Lead Time"].median() > 365:
+        st.warning(
+            "Historical lead times exceed one year. The uploaded Order Date and Ship Date "
+            "also produce very large date differences. The dashboard will not rescale or "
+            "cap these values automatically; confirm the source date fields and units."
+        )
+else:
+    st.info("A usable historical Lead Time column was not found for validation.")
+
+if model_validation:
+    validation_cols = st.columns(4)
+    validation_cols[0].metric("Holdout MAE", f"{model_validation['MAE']:.2f} days")
+    validation_cols[1].metric("Holdout RMSE", f"{model_validation['RMSE']:.2f} days")
+    validation_cols[2].metric("Holdout R²", f"{model_validation['R2']:.3f}")
+    validation_cols[3].metric("Test Records", f"{model_validation['test_rows']:,}")
+    st.caption("Validation uses a reproducible 80/20 split of the supplied historical dataset and a cloned model. It is an in-app holdout estimate, not a saved original training report.")
+else:
+    st.info("Holdout model metrics could not be calculated from the supplied model and data.")
 
 
 # =========================================================
@@ -522,6 +590,12 @@ else:
             "profit as a proxy. Treat this as an indicative comparison, not "
             "a guaranteed profit forecast."
         )
+        st.info(
+            "Shipping-cost savings are not calculated because the supplied data "
+            "does not contain a shipping/freight cost field. Gross-profit comparisons "
+            "use historical factory averages as a proxy and should not be interpreted "
+            "as a guaranteed change in profit."
+        )
 
         with st.expander("View factory scores used for this recommendation"):
             score_view = ranked_scenarios[
@@ -619,20 +693,40 @@ st.header("⚠️ Risk & Impact Panel")
 if recommendations.empty:
     st.info("No recommendation data is available for risk analysis.")
 else:
-    reduction_values = pd.to_numeric(
-        recommendations["Lead Time Reduction %"], errors="coerce"
+    risk_data = recommendations.copy()
+    risk_data["Lead Time Reduction %"] = pd.to_numeric(
+        risk_data["Lead Time Reduction %"], errors="coerce"
     )
-    high_impact = reduction_values[reduction_values >= 10]
-
-    risk_cols = st.columns(2)
-    risk_cols[0].metric(
-        "High-Impact Recommendations (10% or more)",
-        f"{len(high_impact):,}"
-    )
-    risk_cols[1].metric(
-        "Total Recommendations",
-        f"{len(recommendations):,}"
-    )
+    risk_data = risk_data.dropna(subset=["Lead Time Reduction %"])
+    if risk_data.empty:
+        st.info("No valid lead-time reduction percentages are available.")
+    else:
+        # Use the recommendation distribution rather than a fixed 10% cutoff.
+        # The supplied recommendations range below 10%, so the old rule always
+        # returned zero high-impact recommendations.
+        q75 = float(risk_data["Lead Time Reduction %"].quantile(0.75))
+        median_reduction = float(risk_data["Lead Time Reduction %"].median())
+        def classify_impact(value):
+            if value >= q75:
+                return "High impact"
+            if value >= median_reduction:
+                return "Medium impact"
+            return "Lower impact"
+        risk_data["Impact Level"] = risk_data["Lead Time Reduction %"].apply(classify_impact)
+        counts = risk_data["Impact Level"].value_counts()
+        risk_cols = st.columns(3)
+        risk_cols[0].metric("High-Impact Recommendations", f"{int(counts.get('High impact', 0)):,}")
+        risk_cols[1].metric("Medium-Impact Recommendations", f"{int(counts.get('Medium impact', 0)):,}")
+        risk_cols[2].metric("Lower-Impact Recommendations", f"{int(counts.get('Lower impact', 0)):,}")
+        st.caption(
+            f"Impact bands are relative to the supplied recommendation set: High ≥ {q75:.2f}%; "
+            f"Medium ≥ {median_reduction:.2f}% and below the high threshold; Lower < {median_reduction:.2f}%. "
+            "These are relative ranking labels, not operational safety-risk ratings."
+        )
+        risk_view = risk_data[["Product Name", "Current Factory", "Test Factory", "Lead Time Reduction %", "Impact Level"]].sort_values(
+            "Lead Time Reduction %", ascending=False
+        )
+        st.dataframe(risk_view, use_container_width=True, hide_index=True)
 
 st.info(
     "A higher priority value gives more importance to shipping speed. "
